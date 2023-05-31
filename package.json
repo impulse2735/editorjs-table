@@ -1,7 +1,7 @@
 {
   "name": "@medistream/editorjs-table",
   "description": "Resizable table for Editor.js",
-  "version": "0.1.2",
+  "version": "0.2.1",
   "license": "MIT",
   "main": "./dist/bundle.js",
   "scripts": {
@@ -43,5 +43,8 @@
     "@editorjs/editorjs": "^2.27.0",
     "svg-inline-loader": "^0.8.2",
     "webpack-dev-server": "^3.11.2"
+  },
+  "publishConfig": {
+    "registry": "https://nxs.sigma-it.ru/repository/npm-sigma-release/"
   }
 }
