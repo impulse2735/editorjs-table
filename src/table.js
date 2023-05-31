@@ -155,12 +155,23 @@ export class Table {
       if (isSecondRow && row[0].isHeader) {
         this.isColHeaderOn = true
       }
-
-      row.forEach(({ content, bgColor, colspan, rowspan, display, isHeader }, i) => {
+      row.forEach(({ content, bgColor, colspan, rowspan, display, fontWeight,fontStyle,textDecoration,fontSize,textAlign, isHeader }, i) => {
         const newCell = newRow.insertCell(i)
 
         this._fillCell(newCell)
-
+        newCell.style.fontWeight = fontWeight ? fontWeight : 400
+        if(fontStyle){
+          newCell.style.fontStyle = fontStyle
+        }
+        if(textDecoration){
+          newCell.style.textDecoration = textDecoration
+        }
+        if(fontSize){
+          newCell.style.fontSize = fontSize
+        }
+        if(textAlign){
+          newCell.style.textAlign = textAlign
+        }
         newCell.colSpan = colspan
         newCell.rowSpan = rowspan
         newCell.style.backgroundColor = bgColor
@@ -576,6 +587,66 @@ export class Table {
     this._numberOfRows--
     table.rows[index].remove()
     this.updateButtons()
+  }
+
+  getStyle(el, styleProp) {
+    let value = null;
+    const defaultView = (el.ownerDocument || document).defaultView;
+    // W3C standard way:
+    if (defaultView && defaultView.getComputedStyle) {
+      // sanitize property name to css notation
+      // (hypen separated words eg. font-Size)
+      styleProp = styleProp.replace(/([A-Z])/g, "-$1").toLowerCase();
+      return defaultView.getComputedStyle(el, null).getPropertyValue(styleProp);
+    } else if (el.currentStyle) { // IE
+      // sanitize property name to camelCase
+      styleProp = styleProp.replace(/\-(\w)/g, function(str, letter) {
+        return letter.toUpperCase();
+      });
+      value = el.currentStyle[styleProp];
+      // convert other units to pixels on IE
+      if (/^\d+(em|pt|%|ex)?$/i.test(value)) {
+        return (function(value) {
+          var oldLeft = el.style.left, oldRsLeft = el.runtimeStyle.left;
+          el.runtimeStyle.left = el.currentStyle.left;
+          el.style.left = value || 0;
+          value = el.style.pixelLeft + "px";
+          el.style.left = oldLeft;
+          el.runtimeStyle.left = oldRsLeft;
+          return value;
+        })(value);
+      }
+      return value;
+    }
+  }
+
+  setFontBold() {
+    const selectedCell = this.selectedCell
+    const isToggleFontBold = this.getStyle(selectedCell,'font-weight') !== '400';
+    selectedCell.style.fontWeight = isToggleFontBold ? '400' : '600'
+  }
+
+  setFontItalic(){
+    const selectedCell = this.selectedCell
+    const isToggleFontItalic = this.getStyle(selectedCell,'font-style') === 'italic';
+    selectedCell.style.fontStyle = isToggleFontItalic ? 'normal' : 'italic'
+  }
+
+  setFontUnderline(){
+    const selectedCell = this.selectedCell
+    const isToggleFontUnderline = this.getStyle(selectedCell,'text-decoration').search(/underline/) >= 0 ;
+    selectedCell.style.textDecoration = isToggleFontUnderline ? 'none' : 'underline'
+  }
+
+  setFontSize(size){
+    const selectedCell = this.selectedCell;
+    selectedCell.style.fontSize = size + 'px';
+  }
+
+  setFontAlign(align){
+    const selectedCell = this.selectedCell;
+    console.log(align)
+    selectedCell.style.textAlign = align ? align: 'left';
   }
 
   mergeCells() {

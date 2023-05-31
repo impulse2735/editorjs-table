@@ -105,16 +105,19 @@ class Table {
         const cell = row.cells[j]
         const data = {
           content: cell.querySelector("." + this._CSS.input).innerHTML,
+          fontWeight: cell.style.fontWeight,
+          fontStyle: cell.style.fontStyle,
+          textDecoration: cell.style.textDecoration.search(/underline/) >= 0 ? 'underline' : 'none',
+          fontSize: cell.style.fontSize,
+          textAlign: cell.style.textAlign,
           colspan: cell.colSpan,
           rowspan: cell.rowSpan,
           display: cell.style.display === "none" ? false : true,
           bgColor: cell.style.backgroundColor,
           isHeader: cell.tagName === "TH",
         }
-
         rowData.push(data)
       }
-
       rows.push(rowData)
     }
 

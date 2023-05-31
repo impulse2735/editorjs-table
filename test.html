@@ -27,7 +27,7 @@
 
     <button id="toggleReadOnlyButton">Toggle readOnly</button>
 
-    <script src="./dist/bundle.js"></script>
+    <script src="http://localhost:9000/bundle.js"></script>
     <!-- Load Editor.js's Core -->
     <script src="https://cdn.jsdelivr.net/npm/@editorjs/editorjs@latest"></script>
     <script>
@@ -40,31 +40,31 @@
         tools: {
           table: {
             class: Table,
-            inlineToolbar: true,
+            inlineToolbar: false,
             config: {
               rows: 3,
               cols: 3,
             },
           },
         },
+        autofocus: true,
         i18n: {
           messages: {
             tools: {
               table: {
-                "Merge Cells": "셀 합치기",
-                "Divide Cell": "셀 나누기",
-                "Insert Column On Right": "오른쪽에 열 삽입",
-                "Insert Row Below": "아래에 행 삽입",
-                "Remove Column": "열(↕) 삭제",
-                "Remove Row": "행(↔) 삭제",
-                "Cell Color": "셀 배경",
-                "Header Row": "헤더 행",
-                "Header Column": "헤더 열",
+                "Merge Cells": "Объеденить ячейки",
+                "Divide Cell": "Разъеденить ячейки",
+                "Insert Column On Right": "Добавить колонку справа",
+                "Insert Row Below": "Добавить строку ниже",
+                "Remove Column": "Удалить колонку",
+                "Remove Row": "Удалить строку",
+                "Cell Color": "Стили ячейки",
+                "Header Row": "Заголавная строка",
+                "Header Column": "Заглавная колонка",
               },
             },
           },
         },
-        autofocus: true,
         onChange: (s) => {
           if (!readOnly) {
             s.saver.save().then((r) => {
