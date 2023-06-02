@@ -1,7 +1,7 @@
 {
   "name": "@sigma/editorjs-table",
   "description": "Resizable table for Editor.js",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "license": "MIT",
   "main": "./dist/bundle.js",
   "scripts": {
@@ -9,10 +9,10 @@
     "build:dev": "webpack serve --mode development",
     "lint": "./node_modules/.bin/eslint"
   },
-  "repository": "https://github.com/medistream-team/editorjs-table",
+  "repository": "https://github.com/impulse2735/editorjs-table/",
   "author": {
-    "name": "medistream.team",
-    "email": "medistream.team@gmail.com"
+    "name": "sigma-it",
+    "email": "impulse27@yandex.ru"
   },
   "keywords": [
     "table",
