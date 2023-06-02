@@ -26,6 +26,7 @@ const FONTSIZES = [
 
 export class CellMenu {
     constructor(table, config, api) {
+        this.dataTarget = config.dataTarget || null;
         this.table = table
         this._colors = config.colors || COLORS
         this._fontSizes = config.fontSizes || FONTSIZES
@@ -420,11 +421,17 @@ export class CellMenu {
         cellMenuInner.classList.add(CSS.cellMenuInner)
 
         const cellMenu = document.createElement("div")
+        if(this.dataTarget){
+            cellMenu.setAttribute('data-id',this.dataTarget);
+        }
         cellMenu.appendChild(cellMenuInner)
         cellMenu.classList.add(CSS.cellMenu)
 
         const colorPalette = document.createElement("div")
         colorPalette.classList.add(CSS.colorPalette)
+        if(this.dataTarget){
+            colorPalette.setAttribute('data-id',this.dataTarget);
+        }
 
         const fontBold = document.createElement("figure")
         fontBold.classList.add(CSS.textStyleBlock)

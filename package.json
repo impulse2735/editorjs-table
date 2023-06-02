@@ -1,7 +1,7 @@
 {
   "name": "@sigma/editorjs-table",
   "description": "Resizable table for Editor.js",
-  "version": "0.2.2",
+  "version": "0.2.5",
   "license": "MIT",
   "main": "./dist/bundle.js",
   "scripts": {

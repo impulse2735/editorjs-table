@@ -27,7 +27,7 @@
 
     <button id="toggleReadOnlyButton">Toggle readOnly</button>
 
-    <script src="http://localhost:9000/bundle.js"></script>
+    <script src="http://localhost:9000/dist/bundle.js"></script>
     <!-- Load Editor.js's Core -->
     <script src="https://cdn.jsdelivr.net/npm/@editorjs/editorjs@latest"></script>
     <script>
@@ -44,6 +44,7 @@
             config: {
               rows: 3,
               cols: 3,
+              dataTarget: "testTarget"
             },
           },
         },
