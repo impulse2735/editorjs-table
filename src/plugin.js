@@ -113,7 +113,7 @@ class Table {
           colspan: cell.colSpan,
           rowspan: cell.rowSpan,
           display: cell.style.display === "none" ? false : true,
-          bgColor: cell.style.backgroundColor,
+          color: cell.style.color,
           isHeader: cell.tagName === "TH",
         }
         rowData.push(data)

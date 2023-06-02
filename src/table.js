@@ -155,7 +155,7 @@ export class Table {
       if (isSecondRow && row[0].isHeader) {
         this.isColHeaderOn = true
       }
-      row.forEach(({ content, bgColor, colspan, rowspan, display, fontWeight,fontStyle,textDecoration,fontSize,textAlign, isHeader }, i) => {
+      row.forEach(({ content, color, colspan, rowspan, display, fontWeight,fontStyle,textDecoration,fontSize,textAlign, isHeader }, i) => {
         const newCell = newRow.insertCell(i)
 
         this._fillCell(newCell)
@@ -174,7 +174,7 @@ export class Table {
         }
         newCell.colSpan = colspan
         newCell.rowSpan = rowspan
-        newCell.style.backgroundColor = bgColor
+        newCell.style.color = color
         newCell.querySelector("." + CSS.inputField).innerHTML = content
 
         if (isHeader) {
@@ -645,7 +645,6 @@ export class Table {
 
   setFontAlign(align){
     const selectedCell = this.selectedCell;
-    console.log(align)
     selectedCell.style.textAlign = align ? align: 'left';
   }
 

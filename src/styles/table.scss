@@ -424,6 +424,7 @@
     }
     .text-style-block {
       display: inline-block;
+      vertical-align: middle;
       width: 27px;
       height: 27px;
       border: 1px solid #b3d4ff99;
@@ -446,16 +447,19 @@
       }
       &.select-elem{
         width: 54px;
+        background-color: transparent;
       }
-      &.text-style-block-align-left{
-        background-image: url('../img/align-left.svg');
-        background-repeat: no-repeat;
-        background-size: cover;
-        background-position: bottom center, 50%, 50%;
+      &.select-color{
+        width: 25px;
+        appearance: none;
+        background-color: transparent;
       }
       &.active-text-style{
-        color: #388ae5
+        background-color: #eafbfe;
       }
+    }
+    .text-style-block > svg {
+      display: block;
     }
   }
 

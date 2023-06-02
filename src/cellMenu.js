@@ -2,19 +2,11 @@ import {create} from "./documentUtils"
 import chevronDown from "./img/chevron-down.svg"
 
 const COLORS = [
+    "#000000",
     "#ffffff",
-    "#e0ebfd",
-    "#eafbfe",
-    "#e8fbf0",
-    "#fefae8",
-    "#fcece7",
-    "#e9e6fd",
-    "#f4f5f7",
-    "#b9d4fb",
-    "#c1f3fd",
-    "#bbf3d3",
-    "#fcf0ba",
-    "#f5c0b0",
+    "#fa0303",
+    "#00e1ff",
+    "#71f17d",
     "#b4bac4",
     "#5f9af8",
     "#93dfef",
@@ -38,10 +30,6 @@ export class CellMenu {
         this._colors = config.colors || COLORS
         this._fontSizes = config.fontSizes || FONTSIZES
         this.api = api
-
-        /**
-         * FIXME: 테이블 셀 메뉴와 컬러 팔레트가 무한 생성되는 현상을 수정해야 합니다.
-         */
         this._init()
         this._fillCellMenu()
     }
@@ -204,32 +192,22 @@ export class CellMenu {
         return option
     }
 
-    _changeCellColor(event) {
-        if (event.target.closest("." + CSS.colorBlock)) {
-            const color =
-                event.target.dataset.color === this._colors[0] ? null : event.target.dataset.color
-            const selectedRows = this.table.selectedRows
-            const selectedCols = this.table.selectedCols
-            const selectedCell = this.table.selectedCell
-
-            this.colorPalette.style.visibility = "hidden"
-            this._hideCellMenu(event)
-
-            if (!selectedRows.length && !selectedCols.length) {
-                selectedCell.style.backgroundColor = color
-                this.table.deselectCells()
-                return
-            }
-
-            for (let i = selectedRows[0]; i <= selectedRows[selectedRows.length - 1]; i++) {
-                for (let j = selectedCols[0]; j <= selectedCols[selectedCols.length - 1]; j++) {
-                    const cell = this.table.body.rows[i].cells[j]
-                    cell.style.backgroundColor = color
-                }
-            }
-
+    _changeCellColor(color) {
+        const selectedRows = this.table.selectedRows
+        const selectedCols = this.table.selectedCols
+        const selectedCell = this.table.selectedCell
+        if (!selectedRows.length && !selectedCols.length) {
+            selectedCell.style.color = color
             this.table.deselectCells()
+            return
         }
+        for (let i = selectedRows[0]; i <= selectedRows[selectedRows.length - 1]; i++) {
+            for (let j = selectedCols[0]; j <= selectedCols[selectedCols.length - 1]; j++) {
+                const cell = this.table.body.rows[i].cells[j]
+                cell.style.color = color
+            }
+        }
+        this.table.deselectCells()
     }
 
     _hideColorPalette() {
@@ -268,8 +246,8 @@ export class CellMenu {
 
     _fillCellMenu() {
         const colorPickerButton = this._createColorPickerButton()
-        const toggleFirstRowHeaderButton = this._createToggleFirstRowHeaderButton.call(this.table)
-        const toggleFirstColHeaderButton = this._createToggleFirstColHeaderButton.call(this.table)
+        /*const toggleFirstRowHeaderButton = this._createToggleFirstRowHeaderButton.call(this.table)
+        const toggleFirstColHeaderButton = this._createToggleFirstColHeaderButton.call(this.table)*/
         const addColumnOnRightButton = this._createAddColumnOnRightButton.call(this.table)
         const addRowBelowButton = this._createAddRowBelow.call(this.table)
         const mergeButton = this._createMergeButton.call(this.table)
@@ -278,8 +256,8 @@ export class CellMenu {
         const colRemoveButton = this._createColRemoveButton.call(this.table)
 
         this._cellMenuInner.appendChild(colorPickerButton)
-        this._cellMenuInner.appendChild(toggleFirstRowHeaderButton)
-        this._cellMenuInner.appendChild(toggleFirstColHeaderButton)
+        /*this._cellMenuInner.appendChild(toggleFirstRowHeaderButton)
+        this._cellMenuInner.appendChild(toggleFirstColHeaderButton)*/
         this._cellMenuInner.appendChild(addColumnOnRightButton)
         this._cellMenuInner.appendChild(addRowBelowButton)
         this._cellMenuInner.appendChild(mergeButton)
@@ -296,21 +274,27 @@ export class CellMenu {
     _handleMouseDown(event) {
         event.preventDefault()
     }
+    rgbToHex(arr) {
+        return '#' + arr.map((x) => {
+            const hex = Number(x).toString(16);
+            return hex.length === 1 ? '0' + hex : hex;
+        }).join('');
+    }
 
     _handleCellMenuButtonClick(event) {
         const openCellMenuButton = event.target.closest("." + CSS.openCellMenuButton)
         const iconBox = openCellMenuButton.querySelector("." + CSS.iconBox)
         const mergeOption = this.container.querySelector("." + CSS.mergeOption)
         const unmergeOption = this.container.querySelector("." + CSS.unmergeOption)
-        const toggleRowHeaderOption = this.container.querySelector("." + CSS.toggleRowHeaderOption)
+        //const toggleRowHeaderOption = this.container.querySelector("." + CSS.toggleRowHeaderOption)
         const toggleColHeaderOption = this.container.querySelector("." + CSS.toggleColHeaderOption)
         const {top, right} = iconBox.getBoundingClientRect()
         const scrollY = Math.floor(window.scrollY)
         const isMergePossible = this.table.checkIfMergePossible.call(this.table)
         const isCurrentCellMerged =
             this.table.selectedCell.colSpan > 1 || this.table.selectedCell.rowSpan > 1
-        const isToggleRowHeaderPossible = this.table.selectedCell.parentNode.rowIndex === 0
-        const isToggleColHeaderPossible = this.table.selectedCell.cellIndex === 0
+        /*const isToggleRowHeaderPossible = this.table.selectedCell.parentNode.rowIndex === 0
+        const isToggleColHeaderPossible = this.table.selectedCell.cellIndex === 0*/
 
         const fontBold = this.colorPalette.querySelector("." + CSS.textStyleBlockBold);
         const isToggleFontBold = this.table.getStyle(this.table.selectedCell, 'font-weight') !== '400';
@@ -350,7 +334,8 @@ export class CellMenu {
 
 
         const fontAlignLeft = this.colorPalette.querySelector("." + CSS.textStyleBlockFontAlignLeft);
-        const isToggleFontAlignLeft = this.table.getStyle(this.table.selectedCell, 'text-align') === 'left';
+        const align = this.table.getStyle(this.table.selectedCell, 'text-align');
+        const isToggleFontAlignLeft = align === 'left' || align === 'start' || !align  ? true : false
         if(fontAlignLeft){
             if (isToggleFontAlignLeft) {
                 fontAlignLeft.classList.add(CSS.activeTextStyle)
@@ -360,7 +345,7 @@ export class CellMenu {
         }
 
         const fontAlignCenter = this.colorPalette.querySelector("." + CSS.textStyleBlockFontAlignCenter);
-        const isToggleFontAlignCenter = this.table.getStyle(this.table.selectedCell, 'text-align') === 'center';
+        const isToggleFontAlignCenter = align === 'center';
         if(fontAlignCenter){
             if (isToggleFontAlignCenter) {
                 fontAlignCenter.classList.add(CSS.activeTextStyle)
@@ -370,7 +355,7 @@ export class CellMenu {
         }
 
         const fontAlignRight = this.colorPalette.querySelector("." + CSS.textStyleBlockFontAlignRight);
-        const isToggleFontAlignRight = this.table.getStyle(this.table.selectedCell, 'text-align') === 'right';
+        const isToggleFontAlignRight = align === 'right';
         if(fontAlignRight){
             if (isToggleFontAlignRight) {
                 fontAlignRight.classList.add(CSS.activeTextStyle)
@@ -385,7 +370,19 @@ export class CellMenu {
         this.container.style.left = `${right + 4}px`
         this.container.style.visibility = "visible"
 
-        if (isToggleRowHeaderPossible) {
+
+        const fontColorElem = this.colorPalette.querySelector("." + CSS.selectColor);
+        const color = this.table.selectedCell.style.color;
+        if(color){
+            fontColorElem.style.backgroundColor = color;
+            fontColorElem.value = this.rgbToHex(color.split('(')[1].split(')'))
+        }else{
+            fontColorElem.value = this._colors[0];
+        }
+
+
+
+        /*if (isToggleRowHeaderPossible) {
             toggleRowHeaderOption.style.display = "flex"
 
             this.table.isRowHeaderOn
@@ -393,9 +390,9 @@ export class CellMenu {
                 : toggleRowHeaderOption.classList.remove(CSS.rowHeaderOn)
         } else {
             toggleRowHeaderOption.style.display = "none"
-        }
+        }*/
 
-        if (isToggleColHeaderPossible) {
+        /*if (isToggleColHeaderPossible) {
             toggleColHeaderOption.style.display = "flex"
 
             this.table.isColHeaderOn
@@ -403,7 +400,7 @@ export class CellMenu {
                 : toggleColHeaderOption.classList.remove(CSS.colHeaderOn)
         } else {
             toggleColHeaderOption.style.display = "none"
-        }
+        }*/
 
         if (isMergePossible) {
             mergeOption.disabled = false
@@ -468,42 +465,55 @@ export class CellMenu {
         const fontAlignLeft = document.createElement("figure")
         fontAlignLeft.classList.add(CSS.textStyleBlock)
         fontAlignLeft.classList.add(CSS.textStyleBlockFontAlignLeft)
-        fontAlignLeft.innerHTML = '&nbsp;L'
-        fontAlignLeft.addEventListener("click", this._fireEventAlignAndClose.bind(this,this.table.setFontAlign.bind(this.table)))
+        fontAlignLeft.innerHTML = "<svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">\n" +
+            "<line x1=\"3.5\" y1=\"12\" x2=\"16.5\" y2=\"12\" stroke=\"#000000\" stroke-width=\"2\" stroke-linecap=\"round\"/>\n" +
+            "<line x1=\"3.5\" y1=\"7\" x2=\"20.5\" y2=\"7\" stroke=\"#000000\" stroke-width=\"2\" stroke-linecap=\"round\"/>\n" +
+            "<line x1=\"3.5\" y1=\"17\" x2=\"20.5\" y2=\"17\" stroke=\"#000000\" stroke-width=\"2\" stroke-linecap=\"round\"/>\n" +
+            "</svg>"
+        fontAlignLeft.addEventListener("click", this._fireEventAlignAndClose.bind(this,this.table.setFontAlign.bind(this.table,'left')))
         colorPalette.appendChild(fontAlignLeft)
 
         const fontAlignCenter = document.createElement("figure")
         fontAlignCenter.classList.add(CSS.textStyleBlock)
         fontAlignCenter.classList.add(CSS.textStyleBlockFontAlignCenter)
-        fontAlignCenter.innerHTML = '&nbsp;C'
-        fontAlignCenter.addEventListener("click", this._fireEventAlignAndClose.bind(this,this.table.setFontAlign.bind(this.table)))
+        fontAlignCenter.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">\n' +
+            '<line x1="5.5" y1="12" x2="18.5" y2="12" stroke="#000000" stroke-width="2" stroke-linecap="round"/>\n' +
+            '<line x1="3.5" y1="7" x2="20.5" y2="7" stroke="#000000" stroke-width="2" stroke-linecap="round"/>\n' +
+            '<line x1="3.5" y1="17" x2="20.5" y2="17" stroke="#000000" stroke-width="2" stroke-linecap="round"/>\n' +
+            '</svg>'
+        fontAlignCenter.addEventListener("click", this._fireEventAlignAndClose.bind(this,this.table.setFontAlign.bind(this.table,'center')))
         colorPalette.appendChild(fontAlignCenter)
 
         const fontAlignRight = document.createElement("figure")
         fontAlignRight.classList.add(CSS.textStyleBlock)
         fontAlignRight.classList.add(CSS.textStyleBlockFontAlignRight)
-        fontAlignRight.innerHTML = '&nbsp;R'
-        fontAlignRight.addEventListener("click", this._fireEventAlignAndClose.bind(this,this.table.setFontAlign.bind(this.table)))
+        fontAlignRight.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">\n' +
+            '<line x1="5.5" y1="12" x2="20.5" y2="12" stroke="#000000" stroke-width="2" stroke-linecap="round"/>\n' +
+            '<line x1="3.5" y1="7" x2="20.5" y2="7" stroke="#000000" stroke-width="2" stroke-linecap="round"/>\n' +
+            '<line x1="3.5" y1="17" x2="20.5" y2="17" stroke="#000000" stroke-width="2" stroke-linecap="round"/>\n' +
+            '</svg>'
+        fontAlignRight.addEventListener("click", this._fireEventAlignAndClose.bind(this,this.table.setFontAlign.bind(this.table,'right')))
         colorPalette.appendChild(fontAlignRight)
 
-        const separator = document.createElement("div");
+        /*const separator = document.createElement("div");
         separator.classList.add(CSS.separatorStyle);
-        colorPalette.appendChild(separator)
+        colorPalette.appendChild(separator)*/
 
-        this._colors.forEach((color,index) => {
-            if(index && index % 10 === 0){
-                const separator = document.createElement("div");
-                separator.classList.add(CSS.separatorStyle);
-                colorPalette.appendChild(separator)
-            }
-            const colorBlock = document.createElement("figure")
-            colorBlock.style.backgroundColor = color
-            colorBlock.classList.add(CSS.colorBlock)
-            colorBlock.setAttribute("data-color", color);
-            colorBlock.addEventListener("click", this._changeCellColor.bind(this))
-            colorPalette.appendChild(colorBlock)
-        })
 
+        const colors = document.createElement("select")
+        colors.classList.add(CSS.textStyleBlock)
+        colors.classList.add(CSS.selectColor)
+
+        for (let i = 0; i < this._colors.length; i++) {
+            const option = document.createElement("option");
+            option.value = this._colors[i];
+            option.style.backgroundColor = this._colors[i];
+            colors.appendChild(option);
+        }
+
+        colors.addEventListener("change", this._fireEventSelectAndClose.bind(this,this._changeCellColor.bind(this)))
+
+        colorPalette.appendChild(colors)
 
         this.container = cellMenu
         this.colorPalette = colorPalette
@@ -565,6 +575,7 @@ export const CSS = {
     textStyleBlockFontAlignRight: 'text-style-block-align-right',
     separatorStyle: 'separator',
     selectStyle: 'select-elem',
+    selectColor: 'select-color',
     toggleRowHeaderOption: "toggle-row-header-option",
     fontBold: 'font-bold-option',
     toggleFontBold: 'font-bold',
